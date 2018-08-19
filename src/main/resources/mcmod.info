@@ -1,0 +1,12 @@
+[
+  {
+    "modid": "oxide",
+    "name": "Oxide",
+    "description": "Rust modding interface",
+    "version": "${version}",
+    "url": "https://github.com/gegy1000/Oxide/",
+    "authorList": ["gegy1000"],
+    "dependencies": [],
+    "credits": "Rust team and contributors"
+  }
+]

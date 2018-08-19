@@ -1,0 +1,13 @@
+[package]
+name = "oxide"
+version = "0.1.0"
+authors = ["gegy1000 <gegy1000@gmail.com>"]
+
+[lib]
+name = "minecraft"
+path = "src/main/rust/minecraft.rs"
+crate-type = ["dylib"]
+
+[dependencies]
+libc = "*"
+jni = "*"
