@@ -4,7 +4,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class RustBootstrap {
     static {
-        System.loadLibrary("minecraft");
+        System.loadLibrary("oxide");
     }
 
     public static native RustModMetadata constructMod();

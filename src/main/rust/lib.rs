@@ -11,35 +11,35 @@ use std::os::raw::{c_char, c_void};
 // TODO: Note we can take a this instance too
 // TODO: We can have a handler that throws Result::Err(E)
 
-pub trait IntoJava<T> {
-    fn into_java(self, env: &JNIEnv) -> T;
+pub trait ToJava<'a, T> {
+    fn to_java(&self, env: &JNIEnv<'a>) -> T;
 }
 
 pub struct ModMetadata<'a> {
-    pub modid: &'a str,
+    pub id: &'a str,
     pub name: &'a str,
     pub version: &'a str,
 }
 
-impl IntoJava<JObject> for ModMetadata {
-    fn into_java(self, env: &JNIEnv) -> JObject {
+impl<'a> ToJava<'a, JObject<'a>> for ModMetadata<'a> {
+    fn to_java(&self, env: &JNIEnv<'a>) -> JObject<'a> {
         let object = env.new_object("net/gegy1000/oxide/RustModMetadata", "()V", &[]).expect("failed to create meta");
 
-        let modid: JObject = self.modid.into_java(env);
-        env.set_field(object, "modid", "Ljava/lang/String;", modid.into()).expect("failed to set modid field");
+        let id: JObject = self.id.to_java(env);
+        env.set_field(object, "id", "Ljava/lang/String;", id.into()).expect("failed to set modid field");
 
-        let name: JObject = self.name.into_java(env);
+        let name: JObject = self.name.to_java(env);
         env.set_field(object, "name", "Ljava/lang/String;", name.into()).expect("failed to set name field");
 
-        let version: JObject = self.version.into_java(env);
+        let version: JObject = self.version.to_java(env);
         env.set_field(object, "version", "Ljava/lang/String;", version.into()).expect("failed to set version field");
 
         object
     }
 }
 
-impl IntoJava<JObject> for &str {
-    fn into_java(self, env: &JNIEnv) -> JObject {
+impl<'a> ToJava<'a, JObject<'a>> for str {
+    fn to_java(&self, env: &JNIEnv<'a>) -> JObject<'a> {
         env.new_string(self).unwrap().into()
     }
 }
@@ -48,11 +48,11 @@ impl IntoJava<JObject> for &str {
 #[allow(non_snake_case)]
 pub extern "C" fn Java_net_gegy1000_oxide_RustBootstrap_constructMod(env: JNIEnv, class: JClass) -> jobject {
     let metadata = ModMetadata {
-        modid: "rustmod",
+        id: "rustmod",
         name: "Rust Mod",
         version: "1.0.0",
     };
-    metadata.into_java(&env).into_inner()
+    metadata.to_java(&env).into_inner()
 }
 
 #[no_mangle]

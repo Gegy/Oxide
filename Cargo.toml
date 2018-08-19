@@ -4,8 +4,8 @@ version = "0.1.0"
 authors = ["gegy1000 <gegy1000@gmail.com>"]
 
 [lib]
-name = "minecraft"
-path = "src/main/rust/minecraft.rs"
+name = "oxide"
+path = "src/main/rust/lib.rs"
 crate-type = ["dylib"]
 
 [dependencies]

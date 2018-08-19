@@ -37,7 +37,7 @@ public class RustModContainer implements ModContainer {
 
     @Override
     public String getModId() {
-        return this.metadata.modid;
+        return this.metadata.id;
     }
 
     @Override
