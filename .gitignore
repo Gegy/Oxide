@@ -13,5 +13,5 @@ build/
 # Minecraft
 minecraft/
 
-/target
+**/target/*
 **/*.rs.bk

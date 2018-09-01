@@ -1,5 +1,7 @@
 package net.gegy1000.oxide.core;
 
+import com.google.common.reflect.Reflection;
+import net.gegy1000.oxide.OxideNative;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 import javax.annotation.Nullable;
@@ -27,7 +29,7 @@ public class OxideCorePlugin implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-
+        Reflection.initialize(OxideNative.class);
     }
 
     @Override

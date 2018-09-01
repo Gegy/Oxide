@@ -15,10 +15,5 @@ public class Oxide {
     @Mod.EventHandler
     public static void onPreInit(FMLPreInitializationEvent event) {
         // TODO: Extract the natives into temp dir and add search path for it
-        try {
-            RustBootstrap.onPreInit(event);
-        } catch (Throwable t) {
-            LOGGER.error("failed to load dll", t);
-        }
     }
 }

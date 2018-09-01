@@ -5,13 +5,18 @@ buildscript {
       name = "forge"
       url = "http://files.minecraftforge.net/maven"
     }
+    maven {
+      url = "https://maven.gegy1000.net"
+    }
   }
   dependencies {
     classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+    classpath "net.gegy1000.oxide:oxide-gradle:0.1.0-SNAPSHOT"
   }
 }
 
 apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "net.gegy1000.oxide.oxide-gradle"
 
 def mod_file = getModFile()
 version = getModField("VERSION", mod_file)
@@ -36,6 +41,12 @@ repositories {
 }
 
 dependencies {
+}
+
+sourceSets {
+  example {
+    java
+  }
 }
 
 jar {
