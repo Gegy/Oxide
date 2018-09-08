@@ -79,9 +79,28 @@ pub extern "C" fn Java_net_gegy1000_oxide_OxideNative_collectMetadata(env: JNIEn
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "C" fn Java_net_gegy1000_oxide_OxideNative_dispatchPreInit(_env: JNIEnv, _: JClass, native_id: i32, _event: JObject) {
+    dispatch_mod_event(native_id, |m| m.pre_init())
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "C" fn Java_net_gegy1000_oxide_OxideNative_dispatchInit(_env: JNIEnv, _: JClass, native_id: i32, _event: JObject) {
+    dispatch_mod_event(native_id, |m| m.init())
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "C" fn Java_net_gegy1000_oxide_OxideNative_dispatchPostInit(_env: JNIEnv, _: JClass, native_id: i32, _event: JObject) {
+    dispatch_mod_event(native_id, |m| m.post_init())
+}
+
+#[inline]
+fn dispatch_mod_event<F>(native_id: i32, f: F)
+    where F: FnOnce(&mut Box<Mod>)
+{
     let mut registry = MOD_REGISTRY.try_lock().unwrap();
     if let Some(ref mut m) = registry.mods.get_mut(native_id as usize) {
-        m.modification.pre_init();
+        f(&mut m.modification);
     }
 }
 

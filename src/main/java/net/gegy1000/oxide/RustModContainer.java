@@ -8,6 +8,8 @@ import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
@@ -191,6 +193,10 @@ public class RustModContainer implements ModContainer {
     public void handleModStateEvent(FMLEvent event) {
         if (event instanceof FMLPreInitializationEvent) {
             OxideNative.dispatchPreInit(this.metadata.nativeId, (FMLPreInitializationEvent) event);
+        } else if (event instanceof FMLInitializationEvent) {
+            OxideNative.dispatchInit(this.metadata.nativeId, (FMLInitializationEvent) event);
+        } else if (event instanceof FMLPostInitializationEvent) {
+            OxideNative.dispatchPostInit(this.metadata.nativeId, (FMLPostInitializationEvent) event);
         }
     }
 }
