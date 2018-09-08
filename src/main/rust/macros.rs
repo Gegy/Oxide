@@ -12,45 +12,118 @@ macro_rules! declare_mods {
     };
 }
 
+// TODO: Duplication
 #[macro_export]
-macro_rules! java_type {
+macro_rules! java_class {
     (
-        $T:ty, $path:expr
-    ) => (
-        impl $crate::JavaType for $T {
-            fn java_type() -> &'static str { $path }
-        }
-    )
-}
-
-#[macro_export]
-macro_rules! java_new {
-    (
-        $path:ident($env:expr) {
+        $(#[$outer:meta])*
+        pub struct $T:ident<$lt:tt>($path:expr) {
             $(
-                $name:ident: $desc:ident = $value:expr,
+                pub $f_name:ident: $f_ty:ty,
             )*
         }
-    ) => (
-        let object = $env.new_object(path!($path), "()V", &[])
-            .expect(format!("failed to create object '{}'", stringify!($path)).as_str());
-        $(
-            let value: JObject = $value.to_java($env);
-            $env.set_field(object, stringify!($name), desc!($desc), value.into())
-                .expect(format!("failed to set field '{}'", stringify!($name)).as_str());
-        )*
-        object
-    );
-}
+    ) => {
+        $(#[$outer])*
+        pub struct $T<$lt> {
+            $(
+                pub $f_name: $f_ty,
+            )*
+            _phantom: ::std::marker::PhantomData<&$lt ()>,
+        }
 
-macro_rules! desc {
-    ($path:ident) => (
-        format!("L{};", path!($path))
-    )
-}
+        impl<$lt> $T<$lt> {
+            pub fn new($($f_name: $f_ty),*) -> Self {
+                $T {
+                    $(
+                        $f_name,
+                    )*
+                    _phantom: ::std::marker::PhantomData,
+                }
+            }
+        }
 
-macro_rules! path {
-    ($path:ident) => (
-        stringify!($path).replace("_", "/").as_str()
-    )
+        impl<$lt> $crate::JavaAlias for $T<$lt> {
+            fn java_alias() -> ::jni::signature::JavaType {
+                ::jni::signature::JavaType::Object($path.to_string())
+            }
+        }
+
+        impl<$lt> $crate::JavaStruct<$lt> for $T<$lt> {
+            fn serialize(&self, env: &$lt ::jni::JNIEnv<$lt>, target: &mut ::jni::objects::JObject<$lt>) -> $crate::JavaResult<()> {
+                use $crate::java::ToJava;
+                $(
+                    {
+                        let value: ::jni::objects::JValue = self.$f_name.to_java(env)?.into_value();
+                        env.set_field(*target, stringify!($f_name), <$f_ty>::java_alias().to_string(), value)?;
+                    }
+                )*
+                Ok(())
+            }
+
+            fn deserialize(env: &$lt ::jni::JNIEnv<$lt>, source: &::jni::objects::JObject<$lt>) -> $crate::JavaResult<Self> {
+                Ok($T {
+                    $(
+                        $f_name: <$f_ty>::from_java(
+                            env,
+                            env.get_field(*source, stringify!($f_name), <$f_ty>::java_alias().to_string())?.unwrap_value()
+                        )?,
+                    )*
+                    _phantom: ::std::marker::PhantomData,
+                })
+            }
+        }
+    };
+    (
+        $(#[$outer:meta])*
+        pub struct $T:ident($path:expr) {
+            $(
+                pub $f_name:ident: $f_ty:ty,
+            )*
+        }
+    ) => {
+        $(#[$outer])*
+        pub struct $T {
+            $(
+                pub $f_name: $f_ty,
+            )*
+        }
+
+        impl $T {
+            pub fn new($($f_name: $f_ty),*) -> Self {
+                $T {
+                    $($f_name),*
+                }
+            }
+        }
+
+        impl $crate::JavaAlias for $T {
+            fn java_alias() -> ::jni::signature::JavaType {
+                ::jni::signature::JavaType::Object($path.to_string())
+            }
+        }
+
+        impl<'a> $crate::JavaStruct<'a> for $T {
+            fn serialize(&self, env: &'a ::jni::JNIEnv<'a>, target: &mut ::jni::objects::JObject<'a>) -> $crate::JavaResult<()> {
+                use $crate::java::ToJava;
+                $(
+                    {
+                        let value: ::jni::objects::JValue = self.$f_name.to_java(env)?.into_value();
+                        env.set_field(*target, stringify!($f_name), <$f_ty>::java_alias().to_string(), value)?;
+                    }
+                )*
+                Ok(())
+            }
+
+            fn deserialize(env: &'a ::jni::JNIEnv<'a>, source: &::jni::objects::JObject<'a>) -> $crate::JavaResult<Self> {
+                Ok($T {
+                    $(
+                        $f_name: <$f_ty>::from_java(
+                            env,
+                            env.get_field(*source, stringify!($f_name), <$f_ty>::java_alias().to_string())?.unwrap_value()
+                        )?,
+                    )*
+                })
+            }
+        }
+    };
 }

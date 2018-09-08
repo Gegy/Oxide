@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate oxide;
 
-use oxide::{Mod, ModMetadata};
+use oxide::ModMetadata;
 
 declare_mods!(ExampleMod);
 
