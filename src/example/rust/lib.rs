@@ -8,11 +8,11 @@ declare_mods!(ExampleMod);
 pub struct ExampleMod;
 
 impl oxide::Mod for ExampleMod {
-    fn metadata(&self) -> ModMetadata {
+    fn metadata<'a>(&self) -> ModMetadata<'a> {
         ModMetadata {
-            id: "example".to_string(),
-            name: "Example".to_string(),
-            version: "1.0".to_string(),
+            id: "example",
+            name: "Example",
+            version: "1.0",
         }
     }
 

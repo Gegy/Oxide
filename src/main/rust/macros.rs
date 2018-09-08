@@ -24,20 +24,20 @@ macro_rules! java_class {
         }
     ) => {
         $(#[$outer])*
+        #[allow(non_snake_case)]
         pub struct $T<$lt> {
             $(
                 pub $f_name: $f_ty,
             )*
-            _phantom: ::std::marker::PhantomData<&$lt ()>,
         }
 
         impl<$lt> $T<$lt> {
+            #[allow(non_snake_case)]
             pub fn new($($f_name: $f_ty),*) -> Self {
                 $T {
                     $(
                         $f_name,
                     )*
-                    _phantom: ::std::marker::PhantomData,
                 }
             }
         }
@@ -48,6 +48,7 @@ macro_rules! java_class {
             }
         }
 
+        #[allow(non_snake_case)]
         impl<$lt> $crate::JavaStruct<$lt> for $T<$lt> {
             fn serialize(&self, env: &$lt ::jni::JNIEnv<$lt>, target: &mut ::jni::objects::JObject<$lt>) -> $crate::JavaResult<()> {
                 use $crate::java::ToJava;
@@ -68,7 +69,6 @@ macro_rules! java_class {
                             env.get_field(*source, stringify!($f_name), <$f_ty>::java_alias().to_string())?.unwrap_value()
                         )?,
                     )*
-                    _phantom: ::std::marker::PhantomData,
                 })
             }
         }
@@ -82,6 +82,7 @@ macro_rules! java_class {
         }
     ) => {
         $(#[$outer])*
+        #[allow(non_snake_case)]
         pub struct $T {
             $(
                 pub $f_name: $f_ty,
@@ -89,6 +90,7 @@ macro_rules! java_class {
         }
 
         impl $T {
+            #[allow(non_snake_case)]
             pub fn new($($f_name: $f_ty),*) -> Self {
                 $T {
                     $($f_name),*

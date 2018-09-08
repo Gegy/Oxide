@@ -1,11 +1,14 @@
 package net.gegy1000.oxide;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
@@ -182,5 +185,12 @@ public class RustModContainer implements ModContainer {
     @Override
     public int getClassVersion() {
         return this.classVersion;
+    }
+
+    @Subscribe
+    public void handleModStateEvent(FMLEvent event) {
+        if (event instanceof FMLPreInitializationEvent) {
+            OxideNative.dispatchPreInit(this.metadata.nativeId, (FMLPreInitializationEvent) event);
+        }
     }
 }
